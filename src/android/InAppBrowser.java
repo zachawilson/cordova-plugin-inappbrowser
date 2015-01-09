@@ -392,10 +392,13 @@ public class InAppBrowser extends CordovaPlugin {
 
     /**
      * Checks to see if it is possible to go back one page in history, then does so.
+     * Otherwise will call closeDialog();
      */
-    private void goBack() {
+    public void goBack() {
         if (this.inAppWebView.canGoBack()) {
             this.inAppWebView.goBack();
+        } else {
+        	closeDialog();
         }
     }
 
