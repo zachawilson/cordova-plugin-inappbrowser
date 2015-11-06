@@ -810,6 +810,7 @@
     self.titleLabel = nil;
     if (_browserOptions.title) {
         self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, 10, toolbarHeight)];
+        self.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0f];
         self.titleLabel.textAlignment = NSTextAlignmentCenter;
         self.titleLabel.numberOfLines = 1;
         self.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
@@ -875,8 +876,8 @@
                                                     ? buttonProps[kThemeableBrowserPropImage] : buttonProps[kThemeableBrowserPropWwwImage]]];
             }
         } else {
-            [self.navigationDelegate emitWarning:kThemeableBrowserEmitCodeUndefined
-                                 withMessage:[NSString stringWithFormat:@"Image for %@ is not defined. Button will not be shown.", description]];
+            //            [self.navigationDelegate emitWarning:kThemeableBrowserEmitCodeUndefined
+            //                                 withMessage:[NSString stringWithFormat:@"Image for %@ is not defined. Button will not be shown.", description]];
         }
 
         UIImage *buttonImagePressed = nil;
@@ -893,21 +894,30 @@
                                                     ? buttonProps[kThemeableBrowserPropImagePressed] : buttonProps[kThemeableBrowserPropWwwImagePressed]]];
             }
         } else {
-            [self.navigationDelegate emitWarning:kThemeableBrowserEmitCodeUndefined
-                             withMessage:[NSString stringWithFormat:@"Pressed image for %@ is not defined.", description]];
+            //            [self.navigationDelegate emitWarning:kThemeableBrowserEmitCodeUndefined
+            //                             withMessage:[NSString stringWithFormat:@"Pressed image for %@ is not defined.", description]];
         }
         
-        if (buttonImage) {
+        if (buttonImage || buttonProps[kThemeableBrowserPropTitle]) {
+            
             result = [UIButton buttonWithType:UIButtonTypeCustom];
-            result.bounds = CGRectMake(0, 0, buttonImage.size.width, buttonImage.size.height);
             
             if (buttonImagePressed) {
                 [result setImage:buttonImagePressed forState:UIControlStateHighlighted];
                 result.adjustsImageWhenHighlighted = NO;
             }
-
-            [result setImage:buttonImage forState:UIControlStateNormal];
+            
+            if(buttonImage){
+                [result setImage:buttonImage forState:UIControlStateNormal];
+            }
+            
+            if(buttonProps[kThemeableBrowserPropTitle]){
+                [result setTitle:buttonProps[kThemeableBrowserPropTitle] forState:UIControlStateNormal];
+            }
+            
+            [result sizeToFit];
             [result addTarget:self action:action forControlEvents:UIControlEventTouchUpInside];
+            
         }
     } else if (!buttonProps) {
         [self.navigationDelegate emitWarning:kThemeableBrowserEmitCodeUndefined
@@ -1309,7 +1319,7 @@
 - (BOOL) getBoolFromDict:(NSDictionary*)dict withKey:(NSString*)key
 {
     BOOL result = NO;
-    if (dict && dict[key]) {
+    if (dict && dict[key] && ![dict[key] isEqual:[NSNull null]]) {
         result = [(NSNumber*) dict[key] boolValue];
     }
     return result;
