@@ -1310,7 +1310,7 @@
 - (NSString*) getStringFromDict:(NSDictionary*)dict withKey:(NSString*)key withDefault:(NSString*)def
 {
     NSString* result = def;
-    if (dict && dict[key]) {
+    if (dict && dict[key] && ![dict[key] isEqual:[NSNull null]]) {
         result = dict[key];
     }
     return result;
@@ -1319,7 +1319,7 @@
 - (BOOL) getBoolFromDict:(NSDictionary*)dict withKey:(NSString*)key
 {
     BOOL result = NO;
-    if (dict && dict[key] && ![dict[key] isEqual:[NSNull null]]) {
+    if (dict && dict[key]) {
         result = [(NSNumber*) dict[key] boolValue];
     }
     return result;
